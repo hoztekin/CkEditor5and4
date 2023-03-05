@@ -1,0 +1,142 @@
+﻿@model CkEditor.Models.Image
+
+@{
+	ViewData["Title"] = "CkEditor";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>CkEditor</h1>
+
+<h4>Image</h4>
+<hr />
+<div class="row">
+	<div class="col-md-8">
+		<form asp-action="CkEditor">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group" style="display:none">
+				<label asp-for="Id" class="control-label" ></label>
+				<input asp-for="Id" class="form-control" />
+				<span asp-validation-for="Id" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Address" class="control-label"></label>
+				<input asp-for="Address" class="form-control" />
+				<span asp-validation-for="Address" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="PhoneNumber" class="control-label"></label>
+				<input asp-for="PhoneNumber" class="form-control" />
+				<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+			</div>
+			<div class="form-group my-4">
+				<label asp-for="Description"  class="control-label"></label>
+				<textarea rows="20" asp-for="Description" id="Description"  class="form-control" ></textarea>
+				<span asp-validation-for="Description" class="text-danger"></span>
+			</div>
+			<div class="form-group mt-4">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts{
+
+
+<script src="~/ckeditor5-build-classic/ckeditor.js"></script>
+
+<script>
+	class MyUploadAdapter {
+	constructor(loader) {
+		this.loader = loader;
+	}
+	upload() {
+		return this.loader.file
+			.then(file => new Promise((resolve, reject) => {
+				this._initRequest();
+				this._initListeners(resolve, reject, file);
+				this._sendRequest(file);
+			}));
+	}
+	abort() {
+		if (this.xhr) {
+			this.xhr.abort();
+		}
+	}
+	_initRequest() {
+		const xhr = this.xhr = new XMLHttpRequest();
+		xhr.open('POST', '@Url.Action("CkEditor","Home")', true);
+		xhr.responseType = 'json';
+	}
+	_initListeners(resolve, reject, file) {
+		const xhr = this.xhr;
+		const loader = this.loader;
+		const genericErrorText = `Couldn't upload file: ${file.name}.`;
+
+		xhr.addEventListener('error', () => reject(genericErrorText));
+		xhr.addEventListener('abort', () => reject());
+		xhr.addEventListener('load', () => {
+			const response = xhr.response;
+			if (!response || response.error) {
+				return reject(response && response.error ? response.error.message : genericErrorText);
+			}
+			resolve({
+				default: response.url
+			});
+		});
+		if (xhr.upload) {
+			xhr.upload.addEventListener('progress', evt => {
+				if (evt.lengthComputable) {
+					loader.uploadTotal = evt.total;
+					loader.uploaded = evt.loaded;
+				}
+			});
+		}
+	}
+	_sendRequest(file) {
+		const data = new FormData();
+		data.append('upload', file);
+		this.xhr.send(data);
+	}
+
+
+
+}
+
+function MyCustomUploadAdapterPlugin(editor) {
+	editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+		return new MyUploadAdapter(loader);
+	};
+}
+ClassicEditor.create(document.querySelector('#Description'), {
+	extraPlugins: [MyCustomUploadAdapterPlugin],
+
+}).then(editor => {
+	window.editor = editor;
+
+
+
+
+})
+	.catch(err => {
+		console.error(err.stack);
+	});
+</script>
+
+
+
+
+
+								
+
+
+
+
+
+
+							
+}
