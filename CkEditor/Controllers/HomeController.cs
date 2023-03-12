@@ -47,8 +47,6 @@ namespace CkEditor.Controllers
 		//}
 
 
-
-
 		[HttpPost]
 		public ActionResult CkEditor(List<IFormFile> files)
 		{
@@ -68,11 +66,6 @@ namespace CkEditor.Controllers
 		#endregion
 
 
-
-
-
-
-
 		#region CK Editor4 ile uygulama bölümü
 
 		[HttpPost]
@@ -82,9 +75,6 @@ namespace CkEditor.Controllers
 			
 			return View();
 		}
-
-
-
 
 
 		public IActionResult Create()
@@ -125,17 +115,10 @@ namespace CkEditor.Controllers
 		
 		}
 
-
-
-
-
-
-
 		#endregion
 
 
-
-
+		#region default actions
 		public IActionResult Index()
 		{
 			return View();
@@ -150,6 +133,7 @@ namespace CkEditor.Controllers
 		public IActionResult Error()
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-		}
+		} 
+		#endregion
 	}
 }
